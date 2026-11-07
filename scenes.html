@@ -52,37 +52,73 @@ Your generated scenes will appear here.
 </div>
 
 <script>
-function generate(){
-const story=document.getElementById("story").value.trim();
-const style=document.getElementById("style").value;
-const duration=document.getElementById("duration").value;
-const count=Math.max(1,Math.min(30,Number(document.getElementById("count").value)||5));
-const output=document.getElementById("output");
+async function generate() {
+  const story = document.getElementById("story").value.trim();
+  const style = document.getElementById("style").value;
+  const duration = document.getElementById("duration").value;
+  const count = Math.max(1, Math.min(30,
+    Number(document.getElementById("count").value) || 5
+  ));
+  const output = document.getElementById("output");
 
-if(!story){
-output.innerHTML="Please enter your story first.";
-return;
-}
+  if (!story) {
+    output.textContent = "Please enter your story first.";
+    return;
+  }
 
-const sentences=story.match(/[^.!?]+[.!?]?/g)||[story];
-output.innerHTML="";
+  output.textContent = "MOKSHA AI is generating your scenes...";
 
-for(let i=0;i<count;i++){
-const scene=sentences[Math.min(i,sentences.length-1)].trim();
-const prompt=`${style}, scene ${i+1}. ${scene}. Cinematic camera movement, consistent characters, detailed environment.`;
-const div=document.createElement("div");
-div.className="scene";
-const title=document.createElement("h3");
-title.textContent=`Scene ${i+1} · ${duration} seconds`;
-const text=document.createElement("p");
-text.textContent=prompt;
-const copy=document.createElement("button");
-copy.textContent="COPY PROMPT";
-copy.onclick=()=>navigator.clipboard.writeText(prompt);
-div.append(title,text,copy);
-output.appendChild(div);
-}
+  const prompt = `
+You are MOKSHA AI, a professional cinematic video director.
+
+Convert this story into exactly ${count} scenes.
+Each scene must be approximately ${duration} seconds.
+Visual style: ${style}
+
+Story:
+${story}
+
+For every scene provide:
+Scene number:
+Visual description:
+Character actions:
+Camera movement:
+Dialogue:
+Video generation prompt:
+
+Maintain consistent characters, clothing, faces and locations.
+Return clear, detailed scenes.
+`;
+
+  try {
+    const response = await fetch("/api/generate", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json"
+      },
+      body: JSON.stringify({ prompt })
+    });
+
+    const data = await response.json();
+
+    if (!response.ok) {
+      throw new Error(data.error || "AI generation failed");
+    }
+
+    const result = data.response;
+
+    if (!result) {
+      throw new Error("The AI returned an empty response.");
+    }
+
+    output.textContent = result;
+
+  } catch (error) {
+    output.textContent = "Error: " + error.message;
+  }
 }
 </script>
+
+
 </body>
 </html>
