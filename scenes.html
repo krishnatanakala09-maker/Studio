@@ -1,0 +1,88 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>MOKSHA Scenes Generator</title>
+<style>
+*{box-sizing:border-box}
+body{background:#090b12;color:white;font-family:Arial;padding:18px}
+h1{color:#a78bfa;font-size:25px}
+p{color:#9da5b8}
+label{display:block;margin:18px 0 8px}
+textarea,select,input{width:100%;padding:13px;background:#171c2b;color:white;border:1px solid #343b50;border-radius:9px}
+textarea{height:140px;resize:vertical}
+button{background:#7955e9;color:white;border:0;padding:13px;border-radius:9px;font-weight:bold;margin-top:15px}
+.output{background:#171c2b;padding:15px;border-radius:12px;margin-top:18px}
+.scene{border-bottom:1px solid #343b50;padding:12px 0}
+</style>
+</head>
+<body>
+<button onclick="location.href='index.html'">← BACK TO STUDIO</button>
+<h1>MOKSHA AI</h1>
+<p>SCENES GENERATOR · MODULE 01</p>
+
+<label>Enter your story</label>
+<textarea id="story" placeholder="Write your story here..."></textarea>
+
+<label>Video style</label>
+<select id="style">
+<option>Cinematic 3D Animation</option>
+<option>Anime</option>
+<option>Realistic Cinema</option>
+<option>2D Animation</option>
+<option>Thriller</option>
+</select>
+
+<label>Scene duration (seconds)</label>
+<select id="duration">
+<option value="8">8 seconds</option>
+<option value="10">10 seconds</option>
+<option value="15">15 seconds</option>
+</select>
+
+<label>Number of scenes</label>
+<input id="count" type="number" min="1" max="30" value="5">
+
+<button onclick="generate()">GENERATE SCENES</button>
+
+<div id="output" class="output">
+Your generated scenes will appear here.
+</div>
+
+<script>
+function generate(){
+const story=document.getElementById("story").value.trim();
+const style=document.getElementById("style").value;
+const duration=document.getElementById("duration").value;
+const count=Math.max(1,Math.min(30,Number(document.getElementById("count").value)||5));
+const output=document.getElementById("output");
+
+if(!story){
+output.innerHTML="Please enter your story first.";
+return;
+}
+
+const sentences=story.match(/[^.!?]+[.!?]?/g)||[story];
+output.innerHTML="";
+
+for(let i=0;i<count;i++){
+const scene=sentences[Math.min(i,sentences.length-1)].trim();
+const prompt=`${style}, scene ${i+1}. ${scene}. Cinematic camera movement, consistent characters, detailed environment.`;
+const div=document.createElement("div");
+div.className="scene";
+const title=document.createElement("h3");
+title.textContent=`Scene ${i+1} · ${duration} seconds`;
+const text=document.createElement("p");
+text.textContent=prompt;
+const copy=document.createElement("button");
+copy.textContent="COPY PROMPT";
+copy.onclick=()=>navigator.clipboard.writeText(prompt);
+div.append(title,text,copy);
+output.appendChild(div);
+}
+}
+</script>
+</body>
+</html>

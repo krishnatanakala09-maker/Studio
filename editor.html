@@ -1,0 +1,133 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>MOKSHA Editing Studio</title>
+<style>
+*{box-sizing:border-box}
+body{background:#090b12;color:white;font-family:Arial;padding:16px}
+h1{color:#a78bfa}
+p{color:#9da5b8}
+button{background:#7955e9;color:white;border:0;padding:12px;border-radius:8px;margin:8px 0;font-weight:bold}
+label{display:block;margin:18px 0 8px}
+input,textarea,select{width:100%;padding:12px;background:#171c2b;color:white;border:1px solid #343b50;border-radius:8px}
+video{width:100%;background:black;border-radius:10px;margin-top:12px}
+.panel{background:#171c2b;padding:15px;border-radius:12px;margin-top:18px}
+#overlay{position:relative}
+#caption{position:absolute;bottom:35px;left:5%;width:90%;text-align:center;font-size:22px;font-weight:bold;color:white;text-shadow:2px 2px 5px black;pointer-events:none}
+</style>
+</head>
+<body>
+
+<button onclick="location.href='index.html'">← BACK TO STUDIO</button>
+
+<h1>MOKSHA AI</h1>
+<p>EDITING STUDIO · MODULE 03</p>
+
+<div class="panel">
+<h3>🎬 Import Video</h3>
+<input type="file" id="clip" accept="video/*">
+
+<div id="overlay">
+<video id="player" controls></video>
+<div id="caption"></div>
+</div>
+</div>
+
+<div class="panel">
+<h3>🎵 Background Music</h3>
+<input type="file" id="music" accept="audio/*">
+<audio id="audio" controls style="width:100%;margin-top:12px"></audio>
+</div>
+
+<div class="panel">
+<h3>✍️ Subtitles</h3>
+<textarea id="subtitle" placeholder="Enter your subtitle here..."></textarea>
+
+<label>Text size</label>
+<select id="size">
+<option value="18px">Small</option>
+<option value="22px" selected>Medium</option>
+<option value="30px">Large</option>
+</select>
+
+<button onclick="addText()">UPDATE SUBTITLE</button>
+</div>
+
+<div class="panel">
+<h3>📐 Video Format</h3>
+<select id="format" onchange="changeFormat()">
+<option value="9/16">9:16 - Shorts</option>
+<option value="16/9">16:9 - YouTube</option>
+<option value="1/1">1:1 - Square</option>
+</select>
+</div>
+
+<div class="panel">
+<h3>✂️ Trim Settings</h3>
+<label>Start time (seconds)</label>
+<input type="number" id="start" value="0" min="0">
+<label>End time (seconds)</label>
+<input type="number" id="end" value="10" min="0">
+<button onclick="trimPreview()">PREVIEW TRIM</button>
+<p id="status">Import a video to begin editing.</p>
+</div>
+
+<script>
+const clip=document.getElementById("clip");
+const player=document.getElementById("player");
+const audio=document.getElementById("audio");
+
+clip.onchange=()=>{
+if(clip.files[0]){
+player.src=URL.createObjectURL(clip.files[0]);
+document.getElementById("status").textContent="Video loaded successfully.";
+}
+};
+
+document.getElementById("music").onchange=e=>{
+if(e.target.files[0]){
+audio.src=URL.createObjectURL(e.target.files[0]);
+}
+};
+
+function addText(){
+const text=document.getElementById("subtitle").value;
+const caption=document.getElementById("caption");
+caption.textContent=text;
+caption.style.fontSize=document.getElementById("size").value;
+}
+
+function changeFormat(){
+player.style.aspectRatio=document.getElementById("format").value;
+player.style.objectFit="contain";
+}
+
+function trimPreview(){
+if(!player.src){
+alert("Import a video first.");
+return;
+}
+const start=Number(document.getElementById("start").value);
+const end=Number(document.getElementById("end").value);
+
+if(start<0||end<=start||end>player.duration){
+alert("Enter valid trim times within the video duration.");
+return;
+}
+player.currentTime=start;
+player.play();
+document.getElementById("status").textContent=
+"Previewing from "+start+" to "+end+" seconds. This is a playback preview, not an exported trim.";
+player.ontimeupdate=()=>{
+if(player.currentTime>=end){
+player.pause();
+player.ontimeupdate=null;
+}
+};
+}
+</script>
+</body>
+</html>
