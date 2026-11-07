@@ -61,7 +61,26 @@ Your generated scenes will appear here.
 </div>
 
 <script>
-async function generate() {
+let characters = [];
+
+function addCharacter() {
+  const name = document.getElementById("charName").value.trim();
+  const description = document.getElementById("charDescription").value.trim();
+
+  if (!name || !description) {
+    alert("Enter character details");
+    return;
+  }
+
+  characters.push({ name, description });
+
+  document.getElementById("characterList").textContent =
+    characters.map(c => c.name + " - " + c.description).join("\n");
+
+  document.getElementById("charName").value = "";
+  document.getElementById("charDescription").value = "";
+}
+  async function generate() {
   const story = document.getElementById("story").value.trim();
   const style = document.getElementById("style").value;
   const duration = document.getElementById("duration").value;
@@ -76,7 +95,9 @@ async function generate() {
   }
 
   output.textContent = "MOKSHA AI is generating your scenes...";
-
+  const characterInfo = characters.map(c =>
+  `${c.name}: ${c.description}`
+).join("\n");
   const prompt = `
 You are MOKSHA AI, a professional cinematic video director.
 
@@ -84,6 +105,8 @@ Convert this story into exactly ${count} scenes.
 Each scene must be approximately ${duration} seconds.
 Visual style: ${style}
 
+Charecters:
+${charecter Info}
 Story:
 ${story}
 
