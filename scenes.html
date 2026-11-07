@@ -46,7 +46,16 @@ button{background:#7955e9;color:white;border:0;padding:13px;border-radius:9px;fo
 <input id="count" type="number" min="1" max="30" value="5">
 
 <button onclick="generate()">GENERATE SCENES</button>
+<h2>CHARACTER MANAGER</h2>
 
+<div class="character">
+  <input id="charName" placeholder="Character name">
+  <textarea id="charDescription"
+    placeholder="Face, age, clothes, personality and voice"></textarea>
+  <button onclick="addCharacter()">ADD CHARACTER</button>
+</div>
+
+<div id="characterList"></div>
 <div id="output" class="output">
 Your generated scenes will appear here.
 </div>
