@@ -63,7 +63,7 @@ Your generated scenes will appear here.
 <script>
 let characters = [];
 
-function addCharacter() {
+window.addCharacter = function () {
   const name = document.getElementById("charName").value.trim();
   const description = document.getElementById("charDescription").value.trim();
 
