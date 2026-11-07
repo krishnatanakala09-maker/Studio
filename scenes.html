@@ -105,7 +105,8 @@ Return clear, detailed scenes.
       throw new Error(data.error || "AI generation failed");
     }
 
-    const result = data.response;
+    const result = data.choices?.
+                    [0]?.message?.content;
 
     if (!result) {
       throw new Error("The AI returned an empty response.");
